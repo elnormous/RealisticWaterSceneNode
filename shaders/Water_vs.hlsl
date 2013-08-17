@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, elvman
+ * Copyright (c) 2013, elvman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
