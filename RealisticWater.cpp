@@ -1,8 +1,8 @@
 #include "RealisticWater.h"
 
 RealisticWaterSceneNode::RealisticWaterSceneNode(scene::ISceneManager* sceneManager, f32 width, f32 height, 
-												irr::core::stringc resourcePath, core::dimension2du renderTargetSize,
-												scene::ISceneNode* parent, s32 id):
+												 const irr::core::stringc& resourcePath, core::dimension2du renderTargetSize,
+												 scene::ISceneNode* parent, s32 id):
 	scene::ISceneNode(parent, sceneManager, id), _time(0),
 	_size(width, height), _sceneManager(sceneManager), _refractionMap(NULL), _reflectionMap(NULL),
 	_windForce(20.0f),_windDirection(0, 1),_waveHeight(0.3f), _waterColor(0.1f, 0.1f, 0.6f, 1.0f), _colorBlendFactor(0.2f), _camera(NULL)
