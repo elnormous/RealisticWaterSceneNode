@@ -1,7 +1,7 @@
 #include "RealisticWater.h"
 
 RealisticWaterSceneNode::RealisticWaterSceneNode(scene::ISceneManager* sceneManager, f32 width, f32 height, 
-												video::ITexture* bumpTexture, core::dimension2du renderTargetSize,
+												irr::core::stringc resourcePath, core::dimension2du renderTargetSize,
 												scene::ISceneNode* parent, s32 id):
 	scene::ISceneNode(parent, sceneManager, id), _time(0),
 	_size(width, height), _sceneManager(sceneManager), _refractionMap(NULL), _reflectionMap(NULL),
@@ -23,13 +23,13 @@ RealisticWaterSceneNode::RealisticWaterSceneNode(scene::ISceneManager* sceneMana
 
 	if (_videoDriver->getDriverType() == video::EDT_DIRECT3D9)
 	{
-		waterPixelShader = "shaders/Water_ps.hlsl";
-		waterVertexShader = "shaders/Water_vs.hlsl";
+		waterPixelShader = resourcePath + "/shaders/Water_ps.hlsl";
+		waterVertexShader = resourcePath + "/shaders/Water_vs.hlsl";
 	}
 	else if (_videoDriver->getDriverType() == video::EDT_OPENGL)
 	{
-		waterPixelShader = "shaders/Water_ps.glsl";
-		waterVertexShader = "shaders/Water_vs.glsl";
+		waterPixelShader = resourcePath + "/shaders/Water_ps.glsl";
+		waterVertexShader = resourcePath + "/shaders/Water_vs.glsl";
 	}
 
 	_shaderMaterial = GPUProgrammingServices->addHighLevelShaderMaterialFromFiles(
@@ -39,6 +39,7 @@ RealisticWaterSceneNode::RealisticWaterSceneNode(scene::ISceneManager* sceneMana
 
 	_waterSceneNode->setMaterialType((video::E_MATERIAL_TYPE)_shaderMaterial);
 
+	irr::video::ITexture* bumpTexture = _videoDriver->getTexture(resourcePath + "/waterbump.png");
 	_waterSceneNode->setMaterialTexture(0, bumpTexture);
 
 	_refractionMap = _videoDriver->addRenderTargetTexture(renderTargetSize);
@@ -188,33 +189,33 @@ void RealisticWaterSceneNode::OnSetConstants(video::IMaterialRendererServices* s
 	core::matrix4 worldViewProj = projection;			
 	worldViewProj *= view;
 	worldViewProj *= world;
-	services->setVertexShaderConstant("WorldViewProj", worldViewProj.pointer(), 16);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("WorldViewProj"), worldViewProj.pointer(), 16);
 	
 	core::matrix4 worldReflectionViewProj = projection;
 	worldReflectionViewProj *= cameraView;
 	worldReflectionViewProj *= world;
 
-	services->setVertexShaderConstant("WorldReflectionViewProj", worldReflectionViewProj.pointer(), 16);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("WorldReflectionViewProj"), worldReflectionViewProj.pointer(), 16);
 
 	f32 waveLength = 0.1f;
-	services->setVertexShaderConstant("WaveLength", &waveLength, 1);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("WaveLength"), &waveLength, 1);
 
 	f32 time = _time / 100000.0f;
-	services->setVertexShaderConstant("Time", &time, 1);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("Time"), &time, 1);
 
-	services->setVertexShaderConstant("WindForce", &_windForce, 1);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("WindForce"), &_windForce, 1);
 
-	services->setVertexShaderConstant("WindDirection", &_windDirection.X, 2);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("WindDirection"), &_windDirection.X, 2);
 
 	//pixel shader constants
 	core::vector3df cameraPosition = _sceneManager->getActiveCamera()->getPosition();
-	services->setPixelShaderConstant("CameraPosition", &cameraPosition.X, 3);
+	services->setPixelShaderConstant(services->getVertexShaderConstantID("CameraPosition"), &cameraPosition.X, 3);
 
-	services->setPixelShaderConstant("WaveHeight", &_waveHeight, 1);
+	services->setPixelShaderConstant(services->getVertexShaderConstantID("WaveHeight"), &_waveHeight, 1);
 
-	services->setPixelShaderConstant("WaterColor", &_waterColor.r, 4);
+	services->setPixelShaderConstant(services->getVertexShaderConstantID("WaterColor"), &_waterColor.r, 4);
 
-	services->setPixelShaderConstant("ColorBlendFactor", &_colorBlendFactor, 1);
+	services->setPixelShaderConstant(services->getVertexShaderConstantID("ColorBlendFactor"), &_colorBlendFactor, 1);
 
 	//texture constants for GLSL
 	if (driver->getDriverType() == video::EDT_OPENGL)
@@ -222,9 +223,9 @@ void RealisticWaterSceneNode::OnSetConstants(video::IMaterialRendererServices* s
 		int var0 = 0;
 		int var1 = 1;
 		int var2 = 2;
-		services->setPixelShaderConstant("WaterBump", (float*)(&var0), 1); //the colormap 
-		services->setPixelShaderConstant("RefractionMap", (float*)(&var1), 1); //the colormap 
-		services->setPixelShaderConstant("ReflectionMap", (float*)(&var2), 1); //the colormap
+		services->setPixelShaderConstant(services->getVertexShaderConstantID("WaterBump"), &var0, 1); //the colormap
+		services->setPixelShaderConstant(services->getVertexShaderConstantID("RefractionMap"), &var1, 1); //the colormap
+		services->setPixelShaderConstant(services->getVertexShaderConstantID("ReflectionMap"), &var2, 1); //the colormap
 	}
 }
 
