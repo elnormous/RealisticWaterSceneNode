@@ -149,7 +149,7 @@ void RealisticWaterSceneNode::OnAnimate(u32 timeMs)
 		_camera->setFarValue(currentCamera->getFarValue());
 		_camera->setFOV(currentCamera->getFOV());
 
-		core::vector3df position = currentCamera->getPosition();
+		core::vector3df position = currentCamera->getAbsolutePosition();
 		position.Y = -position.Y + 2 * RelativeTranslation.Y; //position of the water
 		_camera->setPosition(position);
 
