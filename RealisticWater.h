@@ -48,12 +48,12 @@ public:
 
 	virtual void OnSetConstants(video::IMaterialRendererServices* services, s32 userData);
 
-	virtual void setWindForce(const f32 windForce);
-	virtual void setWindDirection(const core::vector2df& windDirection);
-	virtual void setWaveHeight(const f32 waveHeight);
+	void setWindForce(f32 windForce);
+	void setWindDirection(const core::vector2df& windDirection);
+	void setWaveHeight(f32 waveHeight);
 
-	virtual void setWaterColor(const video::SColorf& waterColor);
-	virtual void setColorBlendFactor(const f32 colorBlendFactor);
+	void setWaterColor(const video::SColorf& waterColor);
+	void setColorBlendFactor(f32 colorBlendFactor);
 
 private:
 
