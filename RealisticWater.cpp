@@ -213,43 +213,55 @@ void RealisticWaterSceneNode::OnSetConstants(video::IMaterialRendererServices* s
 	core::matrix4 worldViewProj = projection;			
 	worldViewProj *= view;
 	worldViewProj *= world;
-	services->setVertexShaderConstant(services->getVertexShaderConstantID("WorldViewProj"), worldViewProj.pointer(), 16);
 	
 	core::matrix4 worldReflectionViewProj = projection;
 	worldReflectionViewProj *= cameraView;
 	worldReflectionViewProj *= world;
-
-	services->setVertexShaderConstant(services->getVertexShaderConstantID("WorldReflectionViewProj"), worldReflectionViewProj.pointer(), 16);
-
+	
 	f32 waveLength = 0.1f;
-	services->setVertexShaderConstant(services->getVertexShaderConstantID("WaveLength"), &waveLength, 1);
-
 	f32 time = _time / 100000.0f;
-	services->setVertexShaderConstant(services->getVertexShaderConstantID("Time"), &time, 1);
-
-	services->setVertexShaderConstant(services->getVertexShaderConstantID("WindForce"), &_windForce, 1);
-
-	services->setVertexShaderConstant(services->getVertexShaderConstantID("WindDirection"), &_windDirection.X, 2);
-
-	//pixel shader constants
 	core::vector3df cameraPosition = _sceneManager->getActiveCamera()->getPosition();
+	
+#if (IRRLICHT_VERSION_MAJOR == 1 && IRRLICHT_VERSION_MINOR == 9)
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("WorldViewProj"), worldViewProj.pointer(), 16);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("WorldReflectionViewProj"), worldReflectionViewProj.pointer(), 16);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("WaveLength"), &waveLength, 1);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("Time"), &time, 1);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("WindForce"), &_windForce, 1);
+	services->setVertexShaderConstant(services->getVertexShaderConstantID("WindDirection"), &_windDirection.X, 2);
 	services->setPixelShaderConstant(services->getVertexShaderConstantID("CameraPosition"), &cameraPosition.X, 3);
-
 	services->setPixelShaderConstant(services->getVertexShaderConstantID("WaveHeight"), &_waveHeight, 1);
-
 	services->setPixelShaderConstant(services->getVertexShaderConstantID("WaterColor"), &_waterColor.r, 4);
-
 	services->setPixelShaderConstant(services->getVertexShaderConstantID("ColorBlendFactor"), &_colorBlendFactor, 1);
-
+#else
+	services->setVertexShaderConstant("WorldViewProj", worldViewProj.pointer(), 16);
+	services->setVertexShaderConstant("WorldReflectionViewProj", worldReflectionViewProj.pointer(), 16);
+	services->setVertexShaderConstant("WaveLength", &waveLength, 1);
+	services->setVertexShaderConstant("Time"), &time, 1);
+	services->setVertexShaderConstant("WindForce", &_windForce, 1);
+	services->setVertexShaderConstant("WindDirection", &_windDirection.X, 2);
+	services->setPixelShaderConstant("CameraPosition", &cameraPosition.X, 3);
+	services->setPixelShaderConstant("WaveHeight", &_waveHeight, 1);
+	services->setPixelShaderConstant("WaterColor", &_waterColor.r, 4);
+	services->setPixelShaderConstant("ColorBlendFactor", &_colorBlendFactor, 1);
+#endif
+	
 	//texture constants for GLSL
 	if (driver->getDriverType() == video::EDT_OPENGL)
 	{
 		int var0 = 0;
 		int var1 = 1;
 		int var2 = 2;
-		services->setPixelShaderConstant(services->getVertexShaderConstantID("WaterBump"), &var0, 1); //the colormap
-		services->setPixelShaderConstant(services->getVertexShaderConstantID("RefractionMap"), &var1, 1); //the colormap
-		services->setPixelShaderConstant(services->getVertexShaderConstantID("ReflectionMap"), &var2, 1); //the colormap
+		
+#if (IRRLICHT_VERSION_MAJOR == 1 && IRRLICHT_VERSION_MINOR == 9)
+		services->setPixelShaderConstant(services->getVertexShaderConstantID("WaterBump"), &var0, 1);
+		services->setPixelShaderConstant(services->getVertexShaderConstantID("RefractionMap"), &var1, 1);
+		services->setPixelShaderConstant(services->getVertexShaderConstantID("ReflectionMap"), &var2, 1);
+#else
+		services->setPixelShaderConstant("WaterBump", &var0, 1);
+		services->setPixelShaderConstant("RefractionMap", &var1, 1);
+		services->setPixelShaderConstant("ReflectionMap", &var2, 1);
+#endif
 	}
 }
 
