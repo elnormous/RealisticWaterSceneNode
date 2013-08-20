@@ -21,6 +21,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+const float LOG2 = 1.442695;
 
 uniform vec3		CameraPosition;  // Position of main position
 uniform float		WaveHeight;
@@ -31,6 +33,9 @@ uniform float		ColorBlendFactor;
 uniform sampler2D	WaterBump; //coverage
 uniform sampler2D	RefractionMap; //coverage
 uniform sampler2D	ReflectionMap; //coverage
+
+uniform bool		FogEnabled;
+uniform int			FogMode;
 
 varying vec2 bumpMapTexCoord;
 varying vec3 refractionMapTexCoord;
@@ -60,8 +65,32 @@ void main()
 	//fresnel can not be lower than 0
 	float fresnelTerm = max( dot(eyeVector, upVector), 0.0 );
 	
+	float fogFactor = 1.0;
+	
+	if (FogEnabled)
+	{
+		float z = gl_FragCoord.z / gl_FragCoord.w;
+
+		if (FogMode == 1) //exp
+		{
+			float fogFactor = exp2(-gl_Fog.density * z * LOG2);
+			fogFactor = clamp(fogFactor, 0.0, 1.0);
+		}
+		else if (FogMode == 0) //linear
+		{
+			fogFactor = (gl_Fog.end - z) / (gl_Fog.end - gl_Fog.start);
+		}
+		else if (FogMode == 2) //exp2
+		{
+			float fogFactor = exp2(-gl_Fog.density * gl_Fog.density * z * z * LOG2);
+			fogFactor = clamp(fogFactor, 0.0, 1.0);
+		}
+	}
+	
 	vec4 combinedColor = refractiveColor * fresnelTerm + reflectiveColor * (1.0 - fresnelTerm);
 	
-	gl_FragColor = ColorBlendFactor * WaterColor + (1.0 - ColorBlendFactor) * combinedColor;
+	vec4 finalColor = ColorBlendFactor * WaterColor + (1.0 - ColorBlendFactor) * combinedColor;
+	
+	gl_FragColor = mix(gl_Fog.color, finalColor, fogFactor );
 }
 

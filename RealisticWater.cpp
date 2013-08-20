@@ -222,6 +222,16 @@ void RealisticWaterSceneNode::OnSetConstants(video::IMaterialRendererServices* s
 	f32 time = _time / 100000.0f;
 	core::vector3df cameraPosition = _sceneManager->getActiveCamera()->getPosition();
 	
+	bool fogEnabled = getMaterial(0).getFlag(video::EMF_FOG_ENABLE);
+	irr::video::SColor color;
+	irr::video::E_FOG_TYPE fogType;
+	f32 start;
+	f32 end;
+	f32 density;
+	bool pixelFog;
+	bool rangeFog;
+	driver->getFog(color, fogType, start, end, density, pixelFog, rangeFog);
+	
 #if (IRRLICHT_VERSION_MAJOR == 1 && IRRLICHT_VERSION_MINOR == 9)
 	services->setVertexShaderConstant(services->getVertexShaderConstantID("WorldViewProj"), worldViewProj.pointer(), 16);
 	services->setVertexShaderConstant(services->getVertexShaderConstantID("WorldReflectionViewProj"), worldReflectionViewProj.pointer(), 16);
@@ -257,10 +267,16 @@ void RealisticWaterSceneNode::OnSetConstants(video::IMaterialRendererServices* s
 		services->setPixelShaderConstant(services->getVertexShaderConstantID("WaterBump"), &var0, 1);
 		services->setPixelShaderConstant(services->getVertexShaderConstantID("RefractionMap"), &var1, 1);
 		services->setPixelShaderConstant(services->getVertexShaderConstantID("ReflectionMap"), &var2, 1);
+		
+		services->setPixelShaderConstant(services->getVertexShaderConstantID("FogEnabled"), (int*)&fogEnabled, 1);
+		services->setPixelShaderConstant(services->getVertexShaderConstantID("FogMode"), (int*)&fogType, 1);
 #else
 		services->setPixelShaderConstant("WaterBump", &var0, 1);
 		services->setPixelShaderConstant("RefractionMap", &var1, 1);
 		services->setPixelShaderConstant("ReflectionMap", &var2, 1);
+		
+		services->setPixelShaderConstant("FogEnabled", (int*)&fogEnabled, 1);
+		services->setPixelShaderConstant("FogMode", (int*)&fogType, 1);
 #endif
 	}
 }
