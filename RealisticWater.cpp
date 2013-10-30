@@ -63,7 +63,7 @@ RealisticWaterSceneNode::RealisticWaterSceneNode(scene::ISceneManager* sceneMana
 
 	_waterSceneNode->setMaterialType((video::E_MATERIAL_TYPE)_shaderMaterial);
 
-	irr::video::ITexture* bumpTexture = _videoDriver->getTexture(resourcePath + "/waterbump.png");
+	irr::video::ITexture* bumpTexture = _videoDriver->getTexture(resourcePath + "/data/waterbump.png");
 	_waterSceneNode->setMaterialTexture(0, bumpTexture);
 
 	_refractionMap = _videoDriver->addRenderTargetTexture(renderTargetSize);
@@ -247,7 +247,7 @@ void RealisticWaterSceneNode::OnSetConstants(video::IMaterialRendererServices* s
 	services->setVertexShaderConstant("WorldViewProj", worldViewProj.pointer(), 16);
 	services->setVertexShaderConstant("WorldReflectionViewProj", worldReflectionViewProj.pointer(), 16);
 	services->setVertexShaderConstant("WaveLength", &waveLength, 1);
-	services->setVertexShaderConstant("Time"), &time, 1);
+	services->setVertexShaderConstant("Time", &time, 1);
 	services->setVertexShaderConstant("WindForce", &_windForce, 1);
 	services->setVertexShaderConstant("WindDirection", &_windDirection.X, 2);
 	services->setPixelShaderConstant("CameraPosition", &cameraPosition.X, 3);
