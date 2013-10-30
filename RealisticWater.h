@@ -21,10 +21,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#pragma once
+#ifndef _REALISTIC_WATER_SCENE_NODE_H
+#define _REALISTIC_WATER_SCENE_NODE_H
 
 #include <irrlicht.h>
+
 using namespace irr;
 
 class RealisticWaterSceneNode: public scene::ISceneNode, video::IShaderConstantSetCallBack
@@ -81,3 +82,5 @@ private:
 
 	u32								_time;
 };
+
+#endif
