@@ -172,7 +172,7 @@ void RealisticWaterSceneNode::OnAnimate(u32 timeMs)
 		_videoDriver->enableClipPlane(0, false);
 
 		//set back old render target
-		_videoDriver->setRenderTarget(0, false, true);
+		_videoDriver->setRenderTarget(0);
 
 		//set back the active camera
 		_sceneManager->setActiveCamera(currentCamera);
